@@ -15,7 +15,9 @@ namespace DataLayer
         }
         public Contact Find(int id)
         {
-            throw new System.NotImplementedException();
+            var sql = "SELECT * FROM Contacts WHERE Id = @id";
+            var contact = _db.Query<Contact>(sql, new{ id }).SingleOrDefault();
+            return contact;
         }
 
         public List<Contact> GetAll()
@@ -25,7 +27,13 @@ namespace DataLayer
 
         public Contact Add(Contact contact)
         {
-            throw new System.NotImplementedException();
+            //the second line of sql is mean get the identity we have just inserted
+            var sql =
+                "INSERT INTO Contacts (FirstName,LastName,Email,Company,Title) VALUES  (@FirstName,@LastName,@Email,@Company,@Title)" +
+                "SELECT CAST(SCOPE_IDENTITY() as int)";
+            var id = _db.Query<int>(sql, contact).Single();
+            contact.Id = id;
+            return contact;
         }
 
         public Contact Update(Contact contact)

@@ -15,11 +15,50 @@ namespace Runner
         static void Main(string[] args)
         {
             Initialize();
-            Get_all_should_result_6_results();
-
+            //Get_all_should_result_6_results();
+            //Insert_should_assign_identity_to_new_entity();
+            Find_should_retrieve_existing_entity(7);
 
 
             Console.ReadLine();
+        }
+
+        static void Find_should_retrieve_existing_entity(int id)
+        {
+            //arrange
+            IContactRepository repository = CreateRepository();
+
+            //act 
+            var contact = repository.Find(id);
+
+            //assert
+            Console.WriteLine("*** Get Contact***");
+            contact.Output();
+            Debug.Assert(contact.FirstName == "Joe");
+            Debug.Assert(contact.LastName == "Blow");
+        }
+
+        static int Insert_should_assign_identity_to_new_entity()
+        {
+            //arrange
+            IContactRepository repository = CreateRepository();
+            var contact = new Contact
+            {
+                FirstName = "Joe",
+                LastName = "Blow",
+                Email = "joe.blow@gmail.com",
+                Company = "Microsoft",
+                Title = "Developer"
+            };
+
+            //act 
+            repository.Add(contact);
+
+            //assert
+            Debug.Assert(contact.Id != 0);
+            Console.WriteLine("*** Contact inserted ***");
+            Console.WriteLine($"New Id : {contact.Id}");
+            return contact.Id;
         }
 
         static void Get_all_should_result_6_results()
