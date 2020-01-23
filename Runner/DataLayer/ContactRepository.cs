@@ -29,7 +29,8 @@ namespace DataLayer
         {
             //the second line of sql is mean get the identity we have just inserted
             var sql =
-                "INSERT INTO Contacts (FirstName,LastName,Email,Company,Title) VALUES  (@FirstName,@LastName,@Email,@Company,@Title)" +
+                "INSERT INTO Contacts (FirstName,LastName,Email,Company,Title) " +
+                "VALUES  (@FirstName,@LastName,@Email,@Company,@Title)" +
                 "SELECT CAST(SCOPE_IDENTITY() as int)";
             var id = _db.Query<int>(sql, contact).Single();
             contact.Id = id;
@@ -38,12 +39,36 @@ namespace DataLayer
 
         public Contact Update(Contact contact)
         {
-            throw new System.NotImplementedException();
+            var sql =
+                "UPDATE CONTACTS SET " +
+                "FirstName = @FirstName, " +
+                "LastName = @LastName, " +
+                "Email = @Email, " +
+                "Company = @Company, " +
+                "Title = @Title " +
+                "WHERE Id = @Id";
+            _db.Execute(sql, contact);
+            return contact;
         }
 
         public void Remove(int id)
         {
-            throw new System.NotImplementedException();
+            _db.Execute("DELETE FROM Contacts WHERE Id = @id", new {id});
+        }
+
+        public Contact GetFullContact(int id)
+        {
+            var sql = "SELECT * FROM Contacts WHERE Id = @id; " +
+                      "SELECT * FROM Addresses WHERE ContactId = @id";
+            using (var multipleResults = _db.QueryMultiple(sql,new {id}))
+            {
+                var contact = multipleResults.Read<Contact>().SingleOrDefault();
+                var addresses = multipleResults.Read<Address>().ToList();
+                
+                contact?.Addresses?.AddRange(addresses);
+
+                return contact;
+            }
         }
     }
 }

@@ -1,0 +1,62 @@
+﻿CREATE PROCEDURE SP_GetAll_Contacts
+As
+SELECT * FROM Contacts
+GO
+
+//============================================
+CREATE PROCEDURE SP_Find_Contact
+(
+	@id int
+) AS
+SELECT * FROM Contacts WHERE Id = @id
+GO
+//============================================
+CREATE PROCEDURE SP_Add_Contact
+(
+	@Id int output,
+	@FirstName varchar(50),
+	@LastName varchar(50),
+	@Title varchar(50),
+	@Company varchar(50),
+	@Email varchar(50)
+)
+AS
+INSERT INTO Contacts (FirstName,LastName,Email,Company,Title)
+VALUES (@FirstName,@LastName,@Email,@Company,@Title)
+SET @Id = cast(scope_identity() as int)
+GO
+//============================================
+CREATE PROCEDURE SP_Update_Contact
+(
+	@Id int,
+	@FirstName varchar(50),
+	@LastName varchar(50),
+	@Title varchar(50),
+	@Company varchar(50),
+	@Email varchar(50)
+)
+AS
+UPDATE CONTACTS SET FirstName = @FirstName,
+				LastName = @LastName,
+				Email = @Email,
+				Company = @Company,
+				Title = @Title
+				WHERE Id = @Id
+GO
+//============================================
+CREATE PROCEDURE SP_Delete_Contact
+(
+	@id int
+)
+AS
+DELETE FROM Contacts WHERE Id = @id
+GO
+//============================================
+CREATE PROCEDURE SP_GetContact_Contact
+(
+	@id int
+)
+AS
+SELECT * FROM Contacts WHERE Id = @id
+SELECT * FROM Addresses WHERE ContactId = @id
+GO

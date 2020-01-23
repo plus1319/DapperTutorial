@@ -11,7 +11,6 @@ namespace DataLayer
         public string Email { get; set; }
         public string  Company { get; set; }
         public string Title { get; set; }
-        public bool IsNew => this.Id == default(int);
 
         public List<Address> Addresses { get; } = new List<Address>();
     }
